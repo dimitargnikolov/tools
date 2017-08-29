@@ -3,33 +3,37 @@
 import secrets, string, argparse
 
 def parse_args():
-	parser = argparse.ArgumentParser(
-		description='Create a random password using a secure RNG.',
-		formatter_class=argparse.ArgumentDefaultsHelpFormatter
-	)
-	parser.add_argument('--nchars', type=int, default=16, help='Number of characters to use for the password. The minimum is 14.')
-	parser.add_argument('--special_chars', type=str, default='', help='A string of special characters to add to the alphabet. Put single quotes around it in case of any issues.')
-	parser.add_argument('--easy_read', action='store_true', help='Remove 1, l, I, L, o, O and 0 from the alphabet for easier reading.')
-	args = parser.parse_args()
+    parser = argparse.ArgumentParser(
+                 description='Create a random password using a secure RNG.',
+                 formatter_class=argparse.ArgumentDefaultsHelpFormatter
+             )
+    parser.add_argument('--nchars', type=int, default=16, 
+                        help='Number of characters to use for the password. The minimum is 14.')
+    parser.add_argument('--special_chars', type=str, default='', 
+                        help='A string of special characters to add to the alphabet. Put single quotes around it in case of any issues.')
+    parser.add_argument('--easy_read', action='store_true', 
+                        help='Remove 1, l, I, L, o, O and 0 from the alphabet for easier reading.')
+    args = parser.parse_args()
 
-	if args.nchars < 14:
-		print('Using fewer than 14 characters will result in an insecure password.')
-		exit()
-	a = string.ascii_letters + string.digits + args.special_chars
-	a = ''.join(set(a))
-	if args.easy_read:
-		a = a.\
-		    replace('1', '').\
-		    replace('l', '').\
-		    replace('I', '').\
-		    replace('L', '').\
-		    replace('0', '').\
-		    replace('o', '').\
-		    replace('O', '')
+    if args.nchars < 14:
+        print('Using fewer than 14 characters will result in an insecure password.')
+        exit()
 
-	return a, args.nchars
+    a = string.ascii_letters + string.digits + args.special_chars
+    a = ''.join(set(a))
+    if args.easy_read:
+        a = a.\
+            replace('1', '').\
+            replace('l', '').\
+            replace('I', '').\
+            replace('L', '').\
+            replace('0', '').\
+            replace('o', '').\
+            replace('O', '')
+        
+    return a, args.nchars
 
 
 if __name__ == '__main__':
-	alphabet, nchars = parse_args()
-	print(''.join(secrets.choice(alphabet) for _ in range(nchars)))
+    alphabet, nchars = parse_args()
+    print(''.join(secrets.choice(alphabet) for _ in range(nchars)))
