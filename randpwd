@@ -11,8 +11,8 @@ def parse_args():
                         help='Number of characters to use for the password. The minimum is 14.')
     parser.add_argument('--special_chars', type=str, default='', 
                         help='A string of special characters to add to the alphabet. Put single quotes around it in case of any issues.')
-    parser.add_argument('--easy_read', action='store_true', 
-                        help='Remove 1, l, I, L, o, O and 0 from the alphabet for easier reading.')
+    parser.add_argument('--include_all_chars', action='store_true', 
+                        help='Include even characters like 1, l, I, L, o, O and 0 that are easily confused with each other in the alphabet.')
     args = parser.parse_args()
 
     if args.nchars < 14:
@@ -20,16 +20,9 @@ def parse_args():
         exit()
 
     a = string.ascii_letters + string.digits + args.special_chars
-    a = ''.join(set(a))
-    if args.easy_read:
-        a = a.\
-            replace('1', '').\
-            replace('l', '').\
-            replace('I', '').\
-            replace('L', '').\
-            replace('0', '').\
-            replace('o', '').\
-            replace('O', '')
+    if not args.include_all_chars:
+        for c in '1lILoO0':
+            a = a.replace(c, '')
         
     return a, args.nchars
 
