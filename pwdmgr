@@ -1,0 +1,34 @@
+#!/bin/bash
+
+if [ ! -e "$HOME/.pwdmgr" ]; then
+  echo "A ~/.pwdmgr file that defines GPG_PWD_FILE and TMP_PWD_FILE is missing."
+  exit 1
+fi
+
+source "$HOME/.pwdmgr"
+
+if [ ! -e "$GPG_PWD_FILE" ] || [ ! -f "$GPG_PWD_FILE" ]; then
+  echo "$GPG_PWD_FILE is not a valid password file."
+  exit 1
+fi
+
+if [ -e "$TMP_PWD_FILE" ]; then
+  echo "$TMP_PWD_FILE already exists. Please, select a different file."
+  exit 1
+fi
+
+TMP_PWD_DIR=$(dirname "$TMP_PWD_FILE")
+
+if [ ! -e "$TMP_PWD_DIR" ]; then
+  echo "$TMP_PWD_DIR does not exist. Creating it."
+  mkdir -p "$TMP_PWD_DIR"
+fi
+
+if [ -z "$EDITOR" ]; then
+  EDITOR="emacs -q"
+fi
+
+gpg2 --output "$TMP_PWD_FILE" --decrypt "$GPG_PWD_FILE"
+$EDITOR "$TMP_PWD_FILE"
+gpg2  --cipher-algo AES256 --output "$GPG_PWD_FILE" --symmetric "$TMP_PWD_FILE"
+rm -P "$TMP_PWD_FILE"*
