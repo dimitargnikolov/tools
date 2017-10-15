@@ -8,8 +8,19 @@ fi
 source "$HOME/.pwdmgr"
 
 if [ ! -e "$GPG_PWD_FILE" ] || [ ! -f "$GPG_PWD_FILE" ]; then
-  echo "$GPG_PWD_FILE is not a valid password file."
-  exit 1
+  echo "$GPG_PWD_FILE does not exist. Create it? (y/n) "
+  read a  
+  if [ $(echo "$a" | tr '[:upper:]' '[:lower:]') = "y" ]; then
+    GPG_PWD_DIR=$(dirname "$GPG_PWD_FILE")
+    if [ ! -e "$GPG_PWD_DIR" ]; then
+      echo "$GPG_PWD_DIR does not exist. Creating it."
+      mkdir -p "$GPG_PWD_DIR"
+    fi
+    touch "$GPG_PWD_FILE"
+  else
+    echo "OK, bye."
+    exit 0
+  fi
 fi
 
 if [ -e "$TMP_PWD_FILE" ]; then
